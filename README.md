@@ -3,12 +3,17 @@
 
 ## Práctica Markdown
 
-Esta carpeta se utilizará para almacenar tareas del curso. 
+Este repositorio se utilizará para almacenar tareas del curso. Todo lo que se escriba estará dentro de distintos folder correspondientes a la unidad correspondiente. El formato será **Tareas_UX** (donde **U** significa Unidad y **X** el número correspondiente).
+
+
+Esto es una prueba
 
 Uso de cursivas: *Zea mays*
 
 -UNIDAD1
+
 -UNIDAD2
+
 -UNIDAD3
 
 Código en línea
