@@ -1,5 +1,7 @@
 # Caracterización de Secuencias Virales de Especies de Mosquitos de Importancia Médica.
 
+## Introducción.
+
 Las enfermedades transmitidas por vectores dependen de la picadura de artrópodos hematófagos a un hospedero mamífero para su transmisión (Wang et al., 2023). Representan el 17% de las enfermedades infecciosas reportadas, al año se reportan 300,000 millones de casos, más de 700,000 muertes y se estima que el 80% de la población mundial se encuentra en riesgo  (alrededor de 6.3 millones de personas) (Larsson, A. 2023; World Health Organization, 2017). Asimismo, de todos los arbovirus que causan enfermedades humanas, alrededor del 90% son transmitidas por mosquitos (Öhlund et al., 2019). Sin embargo, la mayoría del repertorio de virus de RNA de mosquitos sólo se pueden replicar en él y no mantienen ciclos virales entre un vector y un animal vertebrado, por lo que se les conoce como virus específicos de insectos (ISVs, por sus siglas en inglés). Consecuentemente, aunque no todos los virus que naturalmente albergan distintas especies de mosquitos son necesariamente patógenos y no representan un problema de salud pública per se, pueden influir en el mantenimiento de patógenos, modular la transmisión, la competencia vectorial e influir en la emergencia viral (Lewis et al., 2023; Liu et al., 2023; Olmo et al., 2023).
 
 La idea de un microbioma central (core microbiome) se alinea con la identificación de factores comunes compartidos entre microbiomas de varios individuos, lo que implica un amplio rango de características compartidas entre individuos de una población (Neu et al., 2021). Los virus que componen este microbioma tienen un rol comensal, caracterizado por la ausencia de síntomas clínicos en el hospedero (Haynes & Rohwer, 2010). Así, el término core virome se acuñó específicamente para describir un conjunto de virus que se comparte entre la mayoría de los individuos en una población de mosquitos (Shi et al., 2019). Asimismo, la relación virus-mosquito está determinada por factores extrínsecos e intrínsecos; dichas condiciones interactúan y contribuyen al dinamismo de los viromas. Por ejemplo, estudios metagenómicos revelan que presentan: (1) variaciones estacionales con mayor diversidad y abundancia viral en meses cálidos (Liu et al., 2023), (2) diferencias entre hábitats urbanos y silvestres, asociadas a cambios en la disponibilidad de hospederos y condiciones ecológicas (Wang et al., 2024), (3) abundancia y composición a nivel de familia viral diferente en función de las distribuciones de los vectores (Pettersson et al., 2019) y (4) variabilidad geográfica que se relaciona con el taxón al que pertenece el vector, donde los viromas generalmente son específicos a nivel de género y los que ocupan un rango geográfico mayor suelen albergar viromas más diversos (Shi et al., 2017). 
@@ -7,8 +9,6 @@ La idea de un microbioma central (core microbiome) se alinea con la identificaci
 En años recientes, el desarrollo de técnicas experimentales y el cambio de aproximaciones metodológicas, como la popularización de estudios metagenómicos para analizar mosquitos, ha dado lugar a un aumento en el descubrimiento de especies virales (Rosenberg et al., 2013). Por ejemplo, estudios de metatranscriptómica han identificado más de 40 nuevos virus en mosquitos silvestres de los géneros Aedes, Culex y Culiseta (Batson et al., 2021). Sin embargo, la mera detección de secuencias virales a nivel de RNA total no permite discriminar entre infecciones activas, material viral residual o Elementos Virales Endógenos (EVEs). En mosquitos, tanto las infecciones por ISVs como por arbovirus activan la vía de los RNAs de interferencia (RNAi) que se clasifican según su tamaño, biogénesis y proteínas asociadas en: microRNAs (~20-22 nt), pequeños RNAs de interferencia (siRNAs, ~20-22 nt) y RNAs que interaccionan con PIWI (piRNAs, ~25-30 nt) (Tikhe & Dimopoulos, 2021; Trammell & Goodman, 2021). En este contexto, los EVEs no retrovirales adquieren una relevancia particular, ya que en mosquitos del género Aedes, se encuentran enriquecidos en clusters de piRNAs y se transcriben generando piRNAs antisentido contra virus cognados. En el caso de siRNAs, éstos se encuentran de manera consistente cubriendo el genomas virales, lo que permite la reconstrucción de secuencias virales que infectan mosquitos (Palatini et al., 2022).
 
 En conjunto, este proyecto busca caracterizar los viromas con base en datos de RNA total y RNAs pequeños en mosquitos pertenecientes a las especies *Ae. serratus* y *Ae. taeniorhynchus* con tal de identificar posibles patrones y factores biogeográficos, ecológicos y/o taxonómicos que moldeen la composición y su dinámica.
-
-## Introducción.
 
 ## Objetivos.
 Caracterizar la diversidad viral en los mosquitos *Ae. serratus* y *Ae. taeniorhynchus* de la República Mexicana colectados en la península de Yucatán y de ambientes contrastantes (regiones conservadas, diversificadas y urbanas) a partir de RNA total y RNAs pequeños.
@@ -19,11 +19,17 @@ Caracterizar la diversidad viral en los mosquitos *Ae. serratus* y *Ae. taeniorh
 - Identificar y analizar posibles secuencias virales novedosas.
 - Determinar si existen posibles patrones y factores biogeográficos, ecológicos y/o taxonómicos asociados a la composición de sus viromas.
 
-
 ## Flujo de Trabajo
 El flujo de trabajo propuesto para este proyecto consiste en varias etapas: limpieza de las secuencias para que tengan una calidad adecuada...
+El esquema general de análisis se muestra a continuación:
+
+![Project workflow diagram showing the sequential analysis pipeline: quality control with FastQC and MultiQC, sequence trimming with Trimmomatic, and alignment with STAR, connected by directional arrows indicating data flow through each processing stage.](/C:/Jorge/Maestría/Materias/BASH/FlujoTrabajoGeneral.drawio.png)
 
 ## Estructura de carpetas.
+
+1. Control de calidad: FastQC y MultiQC.
+2. Corte de secuencias: Trimmomatic.
+3. Alineamiento: STAR-
 
 ## Programas a utilizar.
 
