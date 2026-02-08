@@ -6,7 +6,7 @@ La idea de un microbioma central (core microbiome) se alinea con la identificaci
 
 En años recientes, el desarrollo de técnicas experimentales y el cambio de aproximaciones metodológicas, como la popularización de estudios metagenómicos para analizar mosquitos, ha dado lugar a un aumento en el descubrimiento de especies virales (Rosenberg et al., 2013). Por ejemplo, estudios de metatranscriptómica han identificado más de 40 nuevos virus en mosquitos silvestres de los géneros Aedes, Culex y Culiseta (Batson et al., 2021). Sin embargo, la mera detección de secuencias virales a nivel de RNA total no permite discriminar entre infecciones activas, material viral residual o Elementos Virales Endógenos (EVEs). En mosquitos, tanto las infecciones por ISVs como por arbovirus activan la vía de los RNAs de interferencia (RNAi) que se clasifican según su tamaño, biogénesis y proteínas asociadas en: microRNAs (~20-22 nt), pequeños RNAs de interferencia (siRNAs, ~20-22 nt) y RNAs que interaccionan con PIWI (piRNAs, ~25-30 nt) (Tikhe & Dimopoulos, 2021; Trammell & Goodman, 2021). En este contexto, los EVEs no retrovirales adquieren una relevancia particular, ya que en mosquitos del género Aedes, se encuentran enriquecidos en clusters de piRNAs y se transcriben generando piRNAs antisentido contra virus cognados. En el caso de siRNAs, éstos se encuentran de manera consistente cubriendo el genomas virales, lo que permite la reconstrucción de secuencias virales que infectan mosquitos (Palatini et al., 2022).
 
-En conjunto, este proyecto busca caracterizar los viromas con base en datos de RNA total y RNAs pequeños en mosquitos pertenecientes a las especies Ae. serratus y Ae. taeniorhynchus con tal de identificar posibles patrones y factores biogeográficos, ecológicos y/o taxonómicos que moldeen la composición y su dinámica.
+En conjunto, este proyecto busca caracterizar los viromas con base en datos de RNA total y RNAs pequeños en mosquitos pertenecientes a las especies *Ae. serratus* y *Ae. taeniorhynchus* con tal de identificar posibles patrones y factores biogeográficos, ecológicos y/o taxonómicos que moldeen la composición y su dinámica.
 
 ## Introducción.
 
@@ -21,6 +21,7 @@ Caracterizar la diversidad viral en los mosquitos *Ae. serratus* y *Ae. taeniorh
 
 
 ## Flujo de Trabajo
+El flujo de trabajo propuesto para este proyecto consiste en varias etapas: limpieza de las secuencias para que tengan una calidad adecuada...
 
 ## Estructura de carpetas.
 
