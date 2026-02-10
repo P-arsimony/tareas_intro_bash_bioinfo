@@ -21,19 +21,40 @@ Caracterizar la diversidad viral en los mosquitos *Ae. serratus* y *Ae. taeniorh
 
 ## Flujo de Trabajo
 
-Las muestras se carcaterizan por ser pools de 15-25 especímenes
-procesamiento bioinformático, secuencias virales, aislamiento viral, inoculación de pool homogenizado, monitoreo de efecto citopático, purificación viral, confirmación de alineamiento vía RT-PCR con primers específicos y caracterización viral incluyendo microscopía y re-secuenciación del genoma. Rama derecha: Control de calidad con FastQC y MultiQC, corte con Trimmomatic, eliminación de lecturas del hospedero, ensamblaje completo del genoma de Aedes, concatenación de contigs y alineamiento de superscaffold, alineamiento local contra nibm basin y base de datos redundante DIAMOND y análisis de diversidad viral. Las flechas indican la progresión del flujo de trabajo y las conexiones entre los pasos. Tono científico profesional documentando la metodología sistemática de análisis viral.
+Las muestras de mosquitos se hicieron entre 2021-22. A partir de ellas, se realizaron pools de 15-25 especímenes. Para la carcaterización de viromas se secuenciaron los homegenados para obtener RNA total y RNAs pequeños. El flujo de trabajo propuesto para este proyecto consiste en varias etapas: limpieza de las secuencias para que tengan una calidad adecuada, corte de secuencias para eliminar adaptadores y bases de baja calidad, eliminación de lecturas del hospedero, ensamblaje completo del genoma de *Aedes*, concatenación de contigs y alineamiento de superscaffold, alineamiento local contra nucleótidos y aminoácidos y análisis de diversidad viral.
 
-El flujo de trabajo propuesto para este proyecto consiste en varias etapas: limpieza de las secuencias para que tengan una calidad adecuada...
-
-
-pool creation for 15-25 specimens, sequencing, bioinformatic processing, viral sequences, viral isolation, homogenized pool inoculation, cytopathic effect monitoring, viral purification, alignment confirmation via RT-PCR with specific primers, and viral characterization including microscopy and genome resequencing. Right branch: Quality control with FastQC and MultiQC, trimming with Trimmomatic, removal of host reads, complete Aedes genome assembly, concatenation of contigs and superscaffold alignment, local alignment against nibm basin and redundant database DIAMOND, and viral diversity analysis. Arrows indicate workflow progression and connections between steps. Professional scientific tone documenting systematic viral analysis methodology
 El esquema general de análisis se muestra a continuación:
 
 ![Se ilustra el flujo de trabajo del proyecto y las etapas del análisis.](./images/FlujoTrabajoGeneral.drawio.png)
 
 ## Estructura de carpetas.
+La estructura de carpetas propuesta para organizar los archivos y resultados del proyecto es la siguiente:
 
+```
+project_root/
+├── data/
+│   ├── results/
+│       ├── tables/                    # Tabular results
+│       ├── figures/                   # Generated figures
+│       ├── reports/                   # HTML/MultiQC reports
+│       └── viral_sequences/           # Viral identified sequences
+├── scr/ # Scripts for data processing, analysis, and pipeline execution
+│   ├── scripts/
+│   │   ├── pipeline/               
+│   │   │   ├── quality_control.sh
+│   │   │   ├── trimming.sh
+│   │   │   ├── host_sequence_removal.sh
+│   │   │   ├── assembly.sh
+│   │   │   ├── viral_identification.sh
+│   │   │   ├── complete_pipeline.sh
+├── metadata/ # Metadata files for samples, including collection details, sequencing information, etc.
+├── docs/ # Documentation, including methods, protocols, and any relevant literature reviews
+│   ├── methods.md
+│   ├── protocols/
+├── analyses/ # Specific analyses such as diversity analysis, phylogenetics, etc.
+├── images/ # For storing any images used in documentation or reports
+├── README.md
+```
 
 ## Programas a utilizar.
 
