@@ -56,6 +56,7 @@ project_root/
 ├── README.md
 ```
 
+
 ## Programas a utilizar.
 
 1. Control de calidad: **FastQC** (Andrews, 2010) y **MultiQC** (Ewels et al., 2016).
