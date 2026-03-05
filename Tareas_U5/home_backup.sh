@@ -2,13 +2,8 @@
 
 # Copiar archivos y directorios de la variable $HOME
 backup_dir="$HOME/backup_$(date +%Y%m%d)"
-mkdir -p "$HOME/backup"
+mkdir -p "$backup_dir"
 
-for homedir in "$HOME"/*; 
-do 
-    cp -a --backup $HOME "$backup_dir";
-done
+cp -a --backup $HOME/. "$backup_dir/";
 
-7z a "backup_$(date +%Y%m%d).7z" "$backup_dir"
-
-
+7z a "${backup_dir}.7z" "$backup_dir"
