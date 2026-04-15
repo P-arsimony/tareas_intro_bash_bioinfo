@@ -14,7 +14,9 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 # Importar funciones de bot
 source "${SCRIPT_DIR}/bot_telegram.sh"  # Asumimos el mismo directorio
-source "${SCRIPT_DIR}/fastq_validacion.sh"
+
+# Variables
+directorio=$1           # Directorio con archivos fastq 
 
 ####==================================####
 ####   Función integridad de FASTQ   ####
