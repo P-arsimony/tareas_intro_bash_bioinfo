@@ -9,10 +9,10 @@
 
 source .env # Cargar variables de entorno para bot de Telegram.
 
-tg_send () {
+tg_send() {
   local msg="$1"
-  curl -s -X POST "https://api.telegram.org/bot${TOKEN}/sendMessage" \
-    -d "chat_id=${CHAT_ID}" \
-    -d "text=${msg}" \
+  curl -s -X POST "https://api.telegram.org/bot${TOKEN}/sendMessage" /
+    -d "chat_id=${CHAT_ID}" /
+    -d "text=${msg}" /
     -d "disable_web_page_preview=true" > /dev/null
 }

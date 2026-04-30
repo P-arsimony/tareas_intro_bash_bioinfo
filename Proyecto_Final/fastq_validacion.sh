@@ -3,7 +3,7 @@
 # Autor: Jorge Alberto Castro Rodríguez
 # Script para validar archivo fastq
 # 14/04/2026
-# Version 2.0.0
+# Version 2.1.0
 
 ####==================================####
 ####          CONFIGURACIÓN           ####
@@ -88,7 +88,7 @@ else
 fi
 
 # Recorrer todos los archivos
-for archivo in "$directorio"/*.fastq; do
+for archivo in "$directorio"/*.fastq "$directorio"/*.fastq.gz; do
     [[ ! -f "$archivo" ]] && continue  # Saltar si no es archivo
     
     nombre_archivo=$(basename "$archivo")
@@ -99,6 +99,20 @@ for archivo in "$directorio"/*.fastq; do
     if [[ -s $archivo ]]; then 
         echo "Archivo ${nombre_archivo} no está vacío"
         tg_send "Archivo ${nombre_archivo} no está vacío"
+
+        # Verificar si está comprimido y descomprimir
+        if [[ "$nombre_archivo" == *.gz ]]; then
+            echo "Descomprimiendo ${nombre_archivo}..."
+            tg_send "Descomprimiendo ${nombre_archivo}..."
+
+            gunzip "$archivo"
+            archivo="${archivo%.gz}"
+            nombre_archivo=$(basename "$archivo")
+            estaba_comprimido=1
+
+            echo "Descompresión completada: ${nombre_archivo}"
+            tg_send "Descompresión completada: ${nombre_archivo}"
+        fi
 
         if [[ $nombre_archivo =~ ^PM[0-9]{4}_S[0-9]{1,2}_R[12]\.fastq$ ]]; then
             echo "Archivo ${nombre_archivo} es válido"
@@ -113,6 +127,16 @@ for archivo in "$directorio"/*.fastq; do
             echo "Error: ${nombre_archivo} no es válido"
             tg_send "${nombre_archivo} no es válido"
         fi
+
+       # Volver a comprimir si originalmente estaba comprimido
+        if [[ $estaba_comprimido -eq 1 ]]; then
+            echo "Comprimiendo ${nombre_archivo}..."
+            tg_send "Comprimiendo ${nombre_archivo}..."
+            gzip "$archivo"
+            echo "Compresión completada: ${nombre_archivo}.gz"
+            tg_send "Compresión completada: ${nombre_archivo}.gz"
+        fi
+
     else 
         echo "Archivo ${nombre_archivo} está vacío"
         tg_send "${nombre_archivo} está vacío"
