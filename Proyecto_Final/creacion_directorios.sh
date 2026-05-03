@@ -29,8 +29,8 @@ create_dir_validation() {
     local dir_description="$2"
     
     if [[ -d "$dir_path" ]]; then
-        echo "📁 Directorio ya existe: ${dir_description}"
-        tg_send "📁 Directorio ya existente: ${dir_description}"
+        echo "Directorio ya existe: ${dir_description}"
+        tg_send "Directorio ya existente: ${dir_description}"
 
     else
         if mkdir -p "$dir_path"; then
@@ -110,7 +110,7 @@ if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
     echo ""
     echo "========================================="
     echo "Proceso completado exitosamente"
-    echo "📁 Ubicación del proyecto: ${BASE_DIR}"
+    echo "Ubicación del proyecto: ${BASE_DIR}"
     echo "========================================="
 
 fi
