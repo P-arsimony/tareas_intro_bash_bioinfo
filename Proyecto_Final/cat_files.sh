@@ -1,8 +1,8 @@
 #!/bin/bash
 
-# Script for lane concatenation
+# Script para concatenación de carriles de secuenciación por muestra, con verificación de integridad y generación de checksums MD5.
 # Author: Jorge Alberto Castro Rodríguez
-# Ver. 2.1.1 (Adapted for Proyecto_Final structure)
+# Ver. 2.1.1 
 # 15/04/2026
 
 ####==================================####
@@ -10,51 +10,53 @@
 ####==================================####
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-PROJECT_ROOT="$SCRIPT_DIR"  # Ya que estás en Proyecto_Final
-RAW_DATA_DIR="${PROJECT_ROOT}/muestras"  # Tus archivos FASTQ están aquí
-OUTPUT_DIR="${PROJECT_ROOT}/muestras/cat_files"  # Directorio para archivos concatenados
+PROJECT_ROOT="$SCRIPT_DIR"  
+RAW_DATA_DIR="${PROJECT_ROOT}/muestras"  
+OUTPUT_DIR="${PROJECT_ROOT}/muestras/cat_files"  
+
+# Bot de telegram
+source "${SCRIPT_DIR}/bot_telegram.sh"  # Asumimos el mismo directorio
 
 # Crear directorio de salida
 mkdir -p "${OUTPUT_DIR}"
 
 cd "${RAW_DATA_DIR}" || exit 1
 
-echo "Working directory: $(pwd)"
-echo "Output directory: ${OUTPUT_DIR}"
-echo ""
+echo " Directorio $(pwd)"
+echo "Directorio de salida ${OUTPUT_DIR}"
+
 
 ####==================================####
 ####   Verificación de archivos       ####
 ####==================================####
 
-echo "Checking FASTQ files in ${RAW_DATA_DIR}..."
-ls -la *.fastq 2>/dev/null || { echo "No FASTQ files found!"; exit 1; }
+echo "Buscando archivos FASTQ en ${RAW_DATA_DIR}..."
+ls -la *.fastq 2>/dev/null || { echo "No se encontraron archivos FASTQ"; exit 1; }
 
 # Verificar integridad básica de archivos FASTQ
-echo ""
+
 echo "Checking for corrupt FASTQ files..."
 for fastq in *.fastq; do
     [[ -f "$fastq" ]] || continue
     lines=$(wc -l < "$fastq")
     if (( lines % 4 != 0 )); then
-        echo "❌ CORRUPT: $fastq - $lines lines (not multiple of 4)"
+        echo " $fastq - $lines no son múltiplos de 4 → Archivo potencialmente corrupto"
     else
-        echo "✓ OK: $fastq - $((lines/4)) reads"
+        echo "OK: $fastq - $((lines/4)) lecturas"
     fi
 done
 
-echo "Corrupt file checking DONE"
-echo ""
+echo "Chequeo de archivos FASTQ completado."
+
 
 ####==================================####
 ####   Concatenación por lanes        ####
 ####==================================####
 
 # Obtener nombres únicos de muestras (PMXXXX_SXX)
-# Nota: Tus archivos tienen formato PM2486_S27_L002_R1_001.fastq
 for sample in $(ls *.fastq | grep -E '_L00[12]_' | sed 's/_L00[12]_.*//' | sort -u); do
 
-    echo "Processing sample: ${sample}"
+    echo "Procesando la muestra ${sample}"
 
     # Inicializar arrays para archivos R1 y R2
     r1_files=()
@@ -67,73 +69,74 @@ for sample in $(ls *.fastq | grep -E '_L00[12]_' | sed 's/_L00[12]_.*//' | sort 
 
         if [[ -f "$r1_file" ]]; then
             r1_files+=("$r1_file")
-            echo "  Found: $r1_file"
+            echo "$r1_file encontrado"
         fi
 
         if [[ -f "$r2_file" ]]; then
             r2_files+=("$r2_file")
-            echo "  Found: $r2_file"
+            echo "$r2_file encontrado"
         fi
     done
 
     # Concatenar archivos R1
     if [[ ${#r1_files[@]} -gt 0 ]]; then
         cat "${r1_files[@]}" > "${OUTPUT_DIR}/${sample}_R1.fastq"
-        echo "  ✓ Created: ${sample}_R1.fastq from ${#r1_files[@]} lane(s)"
+        echo "Se creó ${sample}_R1.fastq a partir de los carrile(s) ${#r1_files[@]}"
     else
-        echo "  ⚠ Warning: No R1 files found for sample ${sample}"
+        echo "No se encontraron archivos R1 para la muestra ${sample}"
     fi
 
     # Concatenar archivos R2
     if [[ ${#r2_files[@]} -gt 0 ]]; then
         cat "${r2_files[@]}" > "${OUTPUT_DIR}/${sample}_R2.fastq"
-        echo "  ✓ Created: ${sample}_R2.fastq from ${#r2_files[@]} lane(s)"
+        echo "Se creó ${sample}_R1.fastq a partir de los carrile(s) ${#r2_files[@]}"
     else
-        echo "  ⚠ Warning: No R2 files found for sample ${sample}"
+        echo "No se encontraron archivos R1 para la muestra ${sample}"
     fi
 
-    echo ""
 done
 
-####==================================####
-####   Limpieza y compresión          ####
-####==================================####
+####=============================####
+####    Limpieza y compresión    ####
+####=============================####
 
 # Opcional: Eliminar archivos originales de lanes
-echo "Do you want to remove original lane files? (y/n)"
+echo "¿Quieres remover los archivos originales? (y/n)"
 read -r respuesta
 if [[ "$respuesta" == "y" || "$respuesta" == "Y" ]]; then
     rm -f -- *_L001_*.fastq *_L002_*.fastq
-    echo "Original lane files removed."
+    echo "Archivos de carriles originales eliminados."
+    tg_send "Archivos origianles conservados en ${RAW_DATA_DIR}"
+
 else
-    echo "Original lane files kept."
+    echo "Archivos originales conservados."
+    tg_send "Archivos originales conservados en ${RAW_DATA_DIR}"
 fi
 
 # Comprimir archivos concatenados
-echo ""
-echo "Compressing concatenated files..."
+echo "Comprimiendo archivos."
 for file in "${OUTPUT_DIR}"/*.fastq; do
     if [ -f "$file" ]; then
-        echo "  Compressing: $(basename "$file")"
+        echo "Comprimiendo: $(basename "$file")"
+        tg_send "Comprimiendo: $(basename "$file")"
         gzip "$file"
     fi
 done
 
-####==================================####
-####   Generación de MD5              ####
-####==================================####
+####=============================####
+####      Generación de MD5      ####
+####=============================####
 
 # Crear directorio para md5 si no existe
-MD5_DIR="${PROJECT_ROOT}/../docs/md5_files"
+MD5_DIR="${PROJECT_ROOT}/../docs/archivos_md5"
 mkdir -p "${MD5_DIR}"
 
 cd "${OUTPUT_DIR}" || exit 1
-md5sum *.fastq.gz > "${MD5_DIR}/md5sums_concatenated.txt"
+md5sum *.fastq.gz > "${MD5_DIR}/md5sums_concatenados.txt"
 echo ""
-echo "MD5 checksums saved to: ${MD5_DIR}/md5sums_concatenated.txt"
+echo "MD5 guardados en ${MD5_DIR}/md5sums_concatenados.txt"
 
-echo ""
-echo "=========================================="
-echo "Process completed successfully!"
-echo "Concatenated files are in: ${OUTPUT_DIR}"
-echo "=========================================="
+
+echo "Los archivos concatenados se encuentran en: ${OUTPUT_DIR}"
+tg_send "Los archivos concatenados se encuentran en: ${OUTPUT_DIR}"
+
