@@ -15,7 +15,9 @@ La relación virus-mosquito-hospedero está determinada por factores extrínseco
 El objetivo de este proyecto es validar la integridad de los archivos FASTQ obtenidos de la secuenciación de transcriptomas de mosquitos de las especies *Ae. serratus* y *Ae. taeniorhynchus* de la península de Yucatán, México. Esta validación es crucial para asegurar la calidad de los datos antes de proceder con análisis posteriores, como el ensamblaje y la anotación de secuencias virales presentes en los mosquitos.
 
 ## Descripción general del proyecto
-El proyecto se divide en varias etapas. 
+El proyecto se divide en varias etapas. En general, se inicia con . Como se muestra en el siguiente diagrama de flujo:
+
+
 
 Este script se enfoca en una etapa no contemplada en un principio durante el planteamiento del flujo de trabajo, sin embargo, importante para asegurar la integridad de los análisis posteriores. La idea en general es establecer un flujo de trabajo para validación de los datos, que incluya la concatenación de archivos de carriles (L001 y L002), la validación de la estructura de los archivos FASTQ, la generación de sumas de verificación MD5 y una prueba de validación de la calidad de las secuencias con FastQC y MultiQC.
 
@@ -81,7 +83,7 @@ mosquito_virome_yucatan_LEVE/
 
 
 ## Configuración del entorno
-
+El entorno de trabajo se configuró en una computadora de escritorio con Windows 11 Home, utilizando WSL2 para ejecutar un entorno Linux.
 
 ## Uso del proyecto
 El proyecto contempla distintos pasos para validar los archivos. 
