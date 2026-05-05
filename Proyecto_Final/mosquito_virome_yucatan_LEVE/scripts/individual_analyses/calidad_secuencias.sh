@@ -39,17 +39,30 @@ run_fastqc() {
     mkdir -p "${output_dir}"
 
     # Count files for progress
-    total_files=$(find "$input_dir" -name "*.fastq" -type f | wc -l)
-    current=0
+    local total_files=$(find "$input_dir" \( -name "*.fastq" -o -name "*.fastq.gz" \) -type f | wc -l)
+    local current=0
     
-    find "$input_dir" -name "*.fastq" -type f | while read -r file; do
+    find "$input_dir" \( -name "*.fastq" -o -name "*.fastq.gz" \) -type f | while read -r file; do
         ((current++))
-        echo "[${current}/${total_files}] Procesando: $(basename "$file")"
-        tg_send "[${current}/${total_files}] Procesando: $(basename "$file")"
-        fastqc "$file" -o "$output_dir"
+
+        local file_basename=$(basename "$file")
+        echo "[${current}/${total_files}] Procesando: ${file_basename}"
+        tg_send "[${current}/${total_files}] Procesando: ${file_basename}"
+
+        # Si está comprimido, descomprimir temporalmente
+        if [[ "$file" == *.gz ]]; then
+            echo "Descomprimiendo temporalmente: ${file_basename}"
+            gunzip -k "$file"  # -k mantiene el original
+            local temp_file="${file%.gz}"
+            fastqc "$temp_file" -o "$output_dir"
+            rm "$temp_file"  # Eliminar temporal
+        else
+            fastqc "$file" -o "$output_dir"
+        fi
     done
     
     echo "FastQC completado exitosamente"
+    tg_send "FastQC completado: ${total_files} archivos procesados"
 
 }
 
