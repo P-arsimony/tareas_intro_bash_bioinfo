@@ -65,7 +65,10 @@ create_directory_structure() {
     # Verificar si el directorio base existe
     create_dir_validation "$base" "Directorio base del proyecto"
     
-    # Data directories
+    # Directorio de contenedores 
+    create_dir_validation "${base}/containers" "/containers"
+
+    # Directorios de datos
     create_dir_validation "${base}/data/raw/total_RNA" "data/raw/total_RNA"
     create_dir_validation "${base}/data/raw/small_RNA" "data/raw/small_RNA"
     create_dir_validation "${base}/data/metadata" "data/metadata"

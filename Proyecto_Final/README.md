@@ -3,7 +3,7 @@
 ## Introducción
 Las enfermedades infecciosas emergentes son aquéllas, conocidas o no, que tienen el potencial de causar brotes con importante impacto financiero y en salud pública. Pueden ser recién introducidas a una población o pueden haber experimentado un aumento significativo en su incidencia o en su rango geográfico. Estos cambios se relacionan con factores ambientales, como cambios climatológicos o ecológicos, al igual que con procesos evolutivos que le permiten al patógeno infectar nuevos hospederos, lo que implica cambios demográficos y de distribución de la enfermedad.  Los virus, entre estos patógenos, representan un riesgo a la salud debido a la adaptabilidad que poseen a raíz de variaciones genéticas impuestas por sus tiempos generacionales cortos y altas tasas de mutación y evolutivas, particularmente los que poseen un genoma de RNA que son la clase más común de patógenos detrás de enfermedades humanas emergentes al año. 
 
-Cabe aclarar que no todo el viroma de los mosquitos está directamente asociado a enfermedades humanas ya que pueden existir virus que generan infecciones subclínicas (asintomáticos, encubiertos o latentes) y virus comensales. De hecho, la mayoría de los virus de RNA en mosquitos sólo se pueden replicar en el insecto, por lo que se les conoce como virus específicos de insecto (VEI). Consecuentemente, aunque no todos los virus que naturalmente albergan distintas especies de mosquitos son necesariamente patógenos, ocupan un lugar prioritario como objetos de investigación, dado que pueden influir en el mantenimiento de patógenos, modular la transmisión o influir en emergencia viral.
+No todo el viroma de los mosquitos está directamente asociado a enfermedades humanas ya que pueden existir virus que generan infecciones subclínicas (asintomáticas o latentes) y virus comensales. De hecho, la mayoría de los virus de RNA en mosquitos sólo se pueden replicar en el insecto, por lo que se les conoce como virus específicos de insecto (VEI). Consecuentemente, aunque no todos los virus que naturalmente albergan distintas especies de mosquitos son necesariamente patógenos, ocupan un lugar prioritario como objetos de investigación, dado que pueden influir en el mantenimiento de patógenos, modular la transmisión o influir en emergencia viral.
 
 La relación virus-mosquito-hospedero está determinada por factores extrínsecos e intrínsecos. Dichas condiciones interactúan y contribuyen a la capacidad de transmisión al influir sobre la supervivencia, fecundidad y comportamiento alimenticio del vector. Estudios metagenómicos revelan que los viromas presentan: (1) variaciones estacionales marcadas, con mayor diversidad y abundancia viral en meses cálidos, (2) posibles diferencias significativas entre hábitats urbanos y silvestres, asociadas a cambios en la disponibilidad de hospederos y condiciones ecológicas y (3) a variabilidad geográfica se relaciona con el taxón al que pertenece el vector, donde los viromas generalmente son específicos a nivel de género y los que ocupan un rango geográfico mayor suelen albergar viromas más diversos. Tal dinamismo exige enfoques de vigilancia que integren genómica, ecología de patógenos y modelos predictivos con tal de comprender las dinámicas de transmisión entre reservorios animales, vectores y humanos.
 
@@ -142,7 +142,21 @@ Para la ejecución de los scripts se recomienda tener la misma estrutura de arch
 
 
 ## Entradas y salidas
+**Entradas**:
 
+- ```creacion_directorios.sh```: Para este script no es necesario ningún archivo adicional solamente crea los directorios que se esperan tener para todo el proyecto. Se crean en cualquier directorio desde donde se corra. **Todos los demás scripts consideran la estrcutura aquí generada**.
+- ```fastq_validacion.sh```: Antes del proceso de concatenación se verifica la integridad de los archivos. Para ello se necesita que los archivos tengan este patrón: ```PM[0-9]{4}_S[0-9]{1,2}_R[12]\.fastq``` para la verificación exitosa del nombre. En este caso no importa si los archivos estén o no comprimidos. 
+- ```cat_files.sh```: Este script contempla que se utilicen como entradas archivos ```.fastq``` sin comprimir y cuyo nombre tengan esta estructura: ```PM[0-9]{4}_S[0-9]{1,2}_R[12]\.fastq```.
+- ```calidad_secuencias.sh```: En este caso, la entrada del script es el archivo concatenado que se encuentra dentro del directorio **mosquito_virome_yucatan_LEVE/data/raw/total_RNA/cat_files*. 
+- ```bot_telegram.sh```: La entrada es cualquier mesnaje que se envíe desde el script. 
+
+**Salidas**:
+
+- ```creacion_directorios.sh```: Se genera toda la estructura de directorios aquí ejemplificada. 
+- ```cat_files.sh```: Se generan los archivos concatenados de los carriles por muestra. 
+- ```fastq_validacion.sh```: La validación genera un archivo ```.csv``` que contiene el número de líneas, lecturas y errores por archivo. 
+- ```calidad_secuencias.sh```: Se genera en el directorio ```mosquito_virome_yucatan_LEVE/results/untrimmed_qc/fastqc``` y en ```mosquito_virome_yucatan_LEVE/results/untrimmed_qc/multiqc```. En el caso de FastQC 
+- ```bot_telegram.sh```: Sólo manda mensajes al canal de telegram.
 
 ## Información del sistema
 El hardaware en donde se ejecutó el proyecto fue el siguiente:
