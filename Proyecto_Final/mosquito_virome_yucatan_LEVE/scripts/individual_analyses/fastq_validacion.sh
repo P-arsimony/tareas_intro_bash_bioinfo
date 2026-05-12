@@ -11,8 +11,9 @@
 
 # Obtener el directorio donde está este script
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PROJECT_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
 
-# Importar funciones de bot
+# Bot de telegram
 source "${SCRIPT_DIR}/bot_telegram.sh"  # Asumimos el mismo directorio
 
 # Variables

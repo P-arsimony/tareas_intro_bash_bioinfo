@@ -1,0 +1,12 @@
+# Ignorar la carpetas
+data/
+results/
+logs/
+
+# Bot de telegram
+.env
+
+# Archivos
+*.fastq
+*.fastq.gz
+*.sif

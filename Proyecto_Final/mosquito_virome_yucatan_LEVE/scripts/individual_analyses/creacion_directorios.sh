@@ -34,12 +34,12 @@ create_dir_validation() {
 
     else
         if mkdir -p "$dir_path"; then
-            echo "✅ Directorio creado: ${dir_description}"
-            tg_send "✅ Directorio creado: ${dir_description}"
+            echo "Directorio creado: ${dir_description}"
+            tg_send "Directorio creado: ${dir_description}"
 
         else
-            echo "❌ Error al crear: ${dir_description}"
-            tg_send "❌ Error al crear directorio: ${dir_description}"
+            echo "Error al crear: ${dir_description}"
+            tg_send "Error al crear directorio: ${dir_description}"
             exit 1
 
         fi

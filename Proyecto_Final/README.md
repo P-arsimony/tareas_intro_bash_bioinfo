@@ -1,4 +1,4 @@
-# <u>Validación de archivos FASTQ de secuencación de transcriptomas de mosquitos de las especies *Aedes serratus* y *Aedes taeniorhynchus* de la península de Yucatán, México.</u>
+# <u>Validación de archivos FASTQ de secuenciación de transcriptomas de mosquitos de las especies *Aedes serratus* y *Aedes taeniorhynchus* de la península de Yucatán, México.</u>
 
 ## Introducción
 Las enfermedades infecciosas emergentes son aquéllas, conocidas o no, que tienen el potencial de causar brotes con importante impacto financiero y en salud pública. Pueden ser recién introducidas a una población o pueden haber experimentado un aumento significativo en su incidencia o en su rango geográfico. Estos cambios se relacionan con factores ambientales, como cambios climatológicos o ecológicos, al igual que con procesos evolutivos que le permiten al patógeno infectar nuevos hospederos, lo que implica cambios demográficos y de distribución de la enfermedad.  Los virus, entre estos patógenos, representan un riesgo a la salud debido a la adaptabilidad que poseen a raíz de variaciones genéticas impuestas por sus tiempos generacionales cortos y altas tasas de mutación y evolutivas, particularmente los que poseen un genoma de RNA que son la clase más común de patógenos detrás de enfermedades humanas emergentes al año. 
@@ -17,13 +17,12 @@ El objetivo de este proyecto es validar la integridad de los archivos FASTQ obte
 ## Descripción general del proyecto
 El proyecto se divide en varias etapas. En general, se inicia con . Como se muestra en el siguiente diagrama de flujo:
 
-
+![Flujo de Trabajo. Se señala en rojo la parte del proyecto que el código cumple.](./mosquito_virome_yucatan_LEVE/docs/FlujoTrabajoGeneral.png)
 
 Este script se enfoca en una etapa no contemplada en un principio durante el planteamiento del flujo de trabajo, sin embargo, importante para asegurar la integridad de los análisis posteriores. La idea en general es establecer un flujo de trabajo para validación de los datos, que incluya la concatenación de archivos de carriles (L001 y L002), la validación de la estructura de los archivos FASTQ, la generación de sumas de verificación MD5 y una prueba de validación de la calidad de las secuencias con FastQC y MultiQC.
 
 ## Estructura del proyecto
-Gran parte de los scripts y análisis dependen de la organización de archivos y directorios como se muestra a continuación. En el caso de que se modifique dicha organización, es importante actualizar
-los scripts en consideración de cualquier cambio realizado.
+Gran parte de los scripts y análisis dependen de la organización de archivos y directorios como se muestra a continuación. En el caso de que se modifique dicha organización, es importante actualizar los scripts en consideración de cualquier cambio realizado.
 
 ```
 mosquito_virome_yucatan_LEVE/
@@ -78,12 +77,31 @@ mosquito_virome_yucatan_LEVE/
 ```
 
 
-
 ## Requisitos de software
-
+- ```FastQC``` v0.11.9
+- ```MultiQC``` version 1.34
+- ```apptainer``` version 1.4.5
+- ```GNU bash```, version 5.2.21(1)-release (x86_64-pc-linux-gnu)
+  - case
+  - echo
+  - find
+  - for
+  - if
+  - elif
+  - local
+  - source
+  - mkdir
+  - pwd
+  - ls
+  - grep
+  - cat
+  - read
+  - rm
+  - gzip
+  - basename
 
 ## Configuración del entorno
-El entorno de trabajo se configuró en una computadora de escritorio con Windows 11 Home, utilizando WSL2 para ejecutar un entorno Linux.
+El entorno de trabajo se configuró en una computadora de escritorio con Windows 11 Home, utilizando WSL2 para ejecutar un entorno Linux. Se utilizó ```apptainer``` para la gestión de contenedores y en el caso de FastQC y MultiQC, se utilizó un solo contenedor para ambos programas: ```pipeline_calidad.sif```. 
 
 ## Uso del proyecto
 El proyecto contempla distintos pasos para validar los archivos. 

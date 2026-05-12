@@ -1,25 +1,25 @@
 #!/bin/bash
 # Módulo de calidad de secuencias
 # Autor: Jorge Alberto Castro Rodríguez
-# Ver. 1.0.0
-# 04/05/2026
+# Ver. 2.0.0
+# 06/05/2026
 
 ####==================================####
 ####          CONFIGURACIÓN           ####
 ####==================================####
 
-
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PROJECT_ROOT="$(cd "${SCRIPT_DIR}/../.." && pwd)"
 
-# Cargar función de extracción de nombre
-source "${SCRIPT_DIR}/extraer_nombre.sh"
 # Cargar bot de telegram
 source "${SCRIPT_DIR}/bot_telegram.sh"
 
 # Directorios de trabajo
-WORKDIR="${1:-$(pwd)/data/raw/total_RNA/cat_files}"
-OUTPUT_BASE="${2:-$(pwd)/results}"
+WORKDIR="${1:-${PROJECT_ROOT}/data/raw/total_RNA/cat_files}"
+OUTPUT_BASE="${2:-${PROJECT_ROOT}/results}"
 
+# Configuración de contenedores
+CONTAINER="${PROJECT_ROOT}/containers/pipeline_calidad.sif"
 
 ####==================================####
 ####        FUNCIÓN FASTQC            ####
@@ -38,32 +38,32 @@ run_fastqc() {
 
     mkdir -p "${output_dir}"
 
-    # Count files for progress
+    # Validación de directorio de entrada
+    if [ ! -d "$input_dir" ]; then
+        echo "Error: directorio ${input_dir} no existe"
+        return 1
+    fi
+
+    # Conteo de archivos
     local total_files=$(find "$input_dir" \( -name "*.fastq" -o -name "*.fastq.gz" \) -type f | wc -l)
     local current=0
     
-    find "$input_dir" \( -name "*.fastq" -o -name "*.fastq.gz" \) -type f | while read -r file; do
+    while IFS= read -r file; do
         ((current++))
-
         local file_basename=$(basename "$file")
         echo "[${current}/${total_files}] Procesando: ${file_basename}"
         tg_send "[${current}/${total_files}] Procesando: ${file_basename}"
 
-        # Si está comprimido, descomprimir temporalmente
-        if [[ "$file" == *.gz ]]; then
-            echo "Descomprimiendo temporalmente: ${file_basename}"
-            gunzip -k "$file"  # -k mantiene el original
-            local temp_file="${file%.gz}"
-            fastqc "$temp_file" -o "$output_dir"
-            rm "$temp_file"  # Eliminar temporal
-        else
-            fastqc "$file" -o "$output_dir"
-        fi
-    done
+        # Contenedor con FastQC
+        apptainer exec \
+            --bind "${input_dir}:/input:ro" \
+            --bind "${output_dir}:/output" \
+            "$CONTAINER" \
+            fastqc "/input/${file_basename}" -o "/output"
+    done < <(find "$input_dir" \( -name "*.fastq" -o -name "*.fastq.gz" \) -type f)
     
     echo "FastQC completado exitosamente"
     tg_send "FastQC completado: ${total_files} archivos procesados"
-
 }
 
 ####==================================####
@@ -84,7 +84,12 @@ run_multiqc() {
     
     mkdir -p "${output_dir}"
 
-    multiqc "$input_dir" -o "$output_dir"
+    # Correr MultiQC en el contenedor
+    apptainer exec \
+        --bind "${input_dir}:/input:ro" \
+        --bind "${output_dir}:/output" \
+        "$CONTAINER" \
+        multiqc "/input" -o "/output"
     
     echo "MultiQC completado exitosamente"
 }
