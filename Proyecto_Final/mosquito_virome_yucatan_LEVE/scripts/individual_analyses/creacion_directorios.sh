@@ -81,8 +81,11 @@ create_directory_structure() {
     # Directorio de resultados 
     create_dir_validation "${base}/results/untrimmed_qc/fastqc" "Resultados: FastQC (sin trimming)"
     create_dir_validation "${base}/results/untrimmed_qc/multiqc" "Resultados: MultiQC (sin trimming)"
+    create_dir_validation "${base}/results/untrimmed_qc/stats" "Estadísticas de validación de archivos .fastq (antes de trimming)"
+
     create_dir_validation "${base}/results/trimmed_qc/fastqc" "Resultados: FastQC (con trimming)"
     create_dir_validation "${base}/results/trimmed_qc/multiqc" "Resultados: MultiQC (con trimming)"
+    create_dir_validation "${base}/results/trimmed_qc/stats" "Estadísticas de validación de archivos .fastq (después de trimming)"
     
     # Directorio de resultados 
     create_dir_validation "${base}/results/trimmed" "Resultados: Secuencias trimmed"

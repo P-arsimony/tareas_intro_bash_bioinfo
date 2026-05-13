@@ -2,8 +2,8 @@
 
 # Autor: Jorge Alberto Castro Rodríguez
 # Script para validar archivo fastq
-# 14/04/2026
-# Version 2.1.0
+# 13/05/2026
+# Version 2.2.0
 
 ####==================================####
 ####          CONFIGURACIÓN           ####
@@ -12,6 +12,7 @@
 # Obtener el directorio donde está este script
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
+OUTDIR="${PROJECT_ROOT}/results"
 
 # Bot de telegram
 source "${SCRIPT_DIR}/bot_telegram.sh"  # Asumimos el mismo directorio
@@ -29,7 +30,24 @@ validar_fastq() {
     local lineas=0
     local reads=0
     local errores=0
-    
+    local gc_total=0
+    local bases_totales=0
+    local total_n=0
+
+
+    stats_file=${OUTDIR}/untrimmed_qc/stats/validacion_estadisticas.csv
+    # Crear directorio si no existe
+    mkdir -p "$(dirname "$stats_file")"
+
+    # Crear CSV con encabezados solo la primera vez
+    if [[ ! -f "$stats_file" ]]; then
+        echo "archivo,lecturas,lineas,errores,gc_porcentaje,total_n,tamano_mb" > "$stats_file"
+    fi
+
+    # Tamaño del archivo
+    local tamano_bytes=$(stat -c%s "$archivo")
+    local tamano_mb=$(echo "scale=2; $tamano_bytes / 1048576" | bc)
+
     while IFS= read -r linea; do
         ((lineas++))
         local pos=$((lineas % 4))
@@ -47,6 +65,16 @@ validar_fastq() {
                     ((errores++))
                 fi
                 seq_len=${#linea}
+                ((bases_totales += seq_len))
+                
+                # Contenido GC
+                gc_count=$(echo "$linea" | tr -cd 'GC' | wc -c)
+                ((gc_total += gc_count))
+                
+                # Cantidad de N's
+                n_count=$(echo "$linea" | tr -cd 'N' | wc -c)
+                ((total_n += n_count))
+
                 ;;
             3)  # Línea separadora
                 if [[ ! "$linea" =~ ^\+ ]]; then
@@ -68,10 +96,16 @@ validar_fastq() {
         echo "${nombre_archivo}: Corrupto - $lineas líneas (no es múltiplo de 4)"
         ((errores++))
     fi
+
+    # Calcular porcentaje GC
+    local gc_porcentaje=0
+    [[ $bases_totales -gt 0 ]] && gc_porcentaje=$(echo "scale=2; $gc_total * 100 / $bases_totales" | bc)
     
-    echo "${nombre_archivo}: $reads reads, $lineas líneas, errores=$errores"
-    tg_send "${nombre_archivo}: $reads reads, $lineas líneas, errores=$errores"
-    
+    echo "${nombre_archivo}: $reads reads, $lineas líneas, errores=$errores, GC=${gc_porcentaje}%, N=${total_n}, tamaño=${tamano_mb}MB"
+    tg_send "${nombre_archivo}: $reads reads, $lineas líneas, errores=$errores, GC=${gc_porcentaje}%, N=${total_n}, tamaño=${tamano_mb}MB"
+
+    # Escribir fila en CSV
+    echo "${nombre_archivo},${reads},${lineas},${errores},${gc_porcentaje},${total_n},${tamano_mb}" >> "$stats_file"
     return $errores
 }
 
