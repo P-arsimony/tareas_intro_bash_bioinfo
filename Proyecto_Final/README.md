@@ -1,5 +1,42 @@
 # <u>Validación de archivos FASTQ de secuenciación de transcriptomas de mosquitos de las especies *Aedes serratus* y *Aedes taeniorhynchus* de la península de Yucatán, México.</u>
 
+## Tabla de Contenidos
+- [Validación de archivos FASTQ de secuenciación de transcriptomas de mosquitos de las especies *Aedes serratus* y *Aedes taeniorhynchus* de la península de Yucatán, México.](#validación-de-archivos-fastq-de-secuenciación-de-transcriptomas-de-mosquitos-de-las-especies-aedes-serratus-y-aedes-taeniorhynchus-de-la-península-de-yucatán-méxico)
+  - [Tabla de Contenidos](#tabla-de-contenidos)
+  - [Resumen](#resumen)
+  - [Introducción](#introducción)
+  - [Objetivo](#objetivo)
+  - [Descripción general del proyecto](#descripción-general-del-proyecto)
+  - [Estructura del proyecto](#estructura-del-proyecto)
+  - [Requisitos de software](#requisitos-de-software)
+  - [Comandos de Bash utilizados](#comandos-de-bash-utilizados)
+  - [Configuración del entorno](#configuración-del-entorno)
+  - [Uso del proyecto](#uso-del-proyecto)
+  - [Ejecución de los scripts](#ejecución-de-los-scripts)
+    - [`crear_directorios.sh`](#crear_directoriossh)
+    - [`cat_files.sh`](#cat_filessh)
+    - [`fastq_validacion.sh`](#fastq_validacionsh)
+    - [`calidad_secuencias.sh`](#calidad_secuenciassh)
+    - [`bot_telegram.sh`](#bot_telegramsh)
+  - [Información del sistema](#información-del-sistema)
+  - [Autoría](#autoría)
+
+## Resumen
+
+Este proyecto implementa un pipeline bioinformático para la validación y control 
+de calidad de datos de secuenciación de transcriptomas de mosquitos vectores 
+(*Aedes serratus* y *Aedes taeniorhynchus*) de la península de Yucatán. 
+
+**Características principales:**
+- Validación de integridad de archivos FASTQ
+- Concatenación de carriles de secuenciación (L001/L002)
+- Control de calidad con FastQC y MultiQC
+- Generación de checksums MD5 para trazabilidad
+- Notificaciones automatizadas vía Telegram
+- Ejecución en entornos contenerizados con Apptainer.
+
+**Tiempo de procesamiento:** ~X horas para N muestras
+
 ## Introducción
 Las enfermedades infecciosas emergentes son aquéllas, conocidas o no, que tienen el potencial de causar brotes con importante impacto financiero y en salud pública. Pueden ser recién introducidas a una población o pueden haber experimentado un aumento significativo en su incidencia o en su rango geográfico. Estos cambios se relacionan con factores ambientales, como cambios climatológicos o ecológicos, al igual que con procesos evolutivos que le permiten al patógeno infectar nuevos hospederos, lo que implica cambios demográficos y de distribución de la enfermedad.  Los virus, entre estos patógenos, representan un riesgo a la salud debido a la adaptabilidad que poseen a raíz de variaciones genéticas impuestas por sus tiempos generacionales cortos y altas tasas de mutación y evolutivas, particularmente los que poseen un genoma de RNA que son la clase más común de patógenos detrás de enfermedades humanas emergentes al año. 
 
@@ -12,10 +49,12 @@ La relación virus-mosquito-hospedero está determinada por factores extrínseco
 El objetivo de este proyecto es validar la integridad de los archivos FASTQ obtenidos de la secuenciación de transcriptomas de mosquitos de las especies *Ae. serratus* y *Ae. taeniorhynchus* de la península de Yucatán, México. Esta validación es crucial para asegurar la calidad de los datos antes de proceder con análisis posteriores, como el ensamblaje y la anotación de secuencias virales presentes en los mosquitos.
 
 ## Descripción general del proyecto
-El proyecto se divide en varias etapas. En general, la porción del proyecto que se describe en este documento se enfoca en la etapa de validación de los archivos FASTQ, que es una parte fundamental del flujo de trabajo general para la caracterización de secuencias virales en mosquitos. Sin embargo, dentro del proyecto en general, se cortan las secuencias, se depletan las lecturas del hospedero con mapeo a genomas de referencia de mosquiitos, se hace ensamblaje *de novo* con distintos progrmas y se hace anotación de las secuencias ensambladas con BLAST y DIAMOND.
+El proyecto se divide en varias etapas. En general, la porción del proyecto que se describe en este documento se enfoca en la etapa de validación de los archivos FASTQ, que es una parte fundamental del flujo de trabajo general para la caracterización de secuencias virales en mosquitos. Sin embargo, dentro del proyecto en general, se cortan las secuencias, se depletan las lecturas del hospedero con mapeo a genomas de referencia de mosquitos, se hace ensamblaje *de novo* con distintos programas y se hace anotación de las secuencias ensambladas con BLAST y DIAMOND.
 
 
-Este script se enfoca en una etapa no contemplada en un principio durante el planteamiento del flujo de trabajo, sin embargo, importante para asegurar la integridad de los análisis posteriores. La idea en general es establecer un flujo de trabajo para validación de los datos, que incluya la concatenación de archivos de carriles (L001 y L002), la validación de la estructura de los archivos FASTQ, la generación de sumas de verificación MD5 y una prueba de validación de la calidad de las secuencias con FastQC y MultiQC. Como se muestra en el siguiente diagrama de flujo, sólo la parte de validación de los archivos FASTQ son los que resuelve el código que se presenta en este documento:
+Este script se enfoca en una etapa no contemplada inicialmente durante el planteamiento 
+del flujo de trabajo; sin embargo, es importante para asegurar la integridad de los 
+análisis posteriores. La idea en general es establecer un flujo de trabajo para validación de los datos, que incluya la concatenación de archivos de carriles (L001 y L002), la validación de la estructura de los archivos FASTQ, la generación de sumas de verificación MD5 y una prueba de validación de la calidad de las secuencias con FastQC y MultiQC. Como se muestra en el siguiente diagrama de flujo, sólo la parte de validación de los archivos FASTQ son los que resuelve el código que se presenta en este documento:
 
 ![Flujo de Trabajo. Se señala en rojo la parte del proyecto que el código cumple.](./mosquito_virome_yucatan_LEVE/docs/FlujoTrabajoGeneral.png)
 
@@ -78,10 +117,16 @@ mosquito_virome_yucatan_LEVE/
 
 
 ## Requisitos de software
-- ```FastQC``` v0.11.9
-- ```MultiQC``` version 1.34
-- ```apptainer``` version 1.4.5
-- ```GNU bash```, version 5.2.21(1)-release (x86_64-pc-linux-gnu)
+
+| Herramienta | Versión | Propósito |
+|------------|---------|-----------|
+| FastQC | v0.11.9 | Control de calidad de secuencias |
+| MultiQC | v1.34 | Agregación de reportes QC |
+| Apptainer | v1.4.5 | Gestión de contenedores |
+| GNU Bash | 5.2.21+ | Shell de ejecución |
+| git | 2.34+ | Control de versiones 
+
+## Comandos de Bash utilizados
   - case
   - echo
   - find
@@ -119,56 +164,85 @@ CALIDAD
 
 4. En cuarto lugar, se hace la validación de la calidad de secuencias con FastQC y MultiQC. Para esto, se escribió un script para la modificación de los nombres de los archivos FASTQ, dado que hay porciones de los nombres poco informativas.
 
-### Ejecución de los scripts
-Para la ejecución de los scripts se recomienda tener la misma estrutura de archivos y directorios que se muestra en la sección de Estructura del proyecto. Los pasos que se deben seguir para la ejecución de los scripts son los siguientes: 
+## Ejecución de los scripts
+A continuación se describen los scripts disponibles para la ejecución de cada uno de los pasos mencionados anteriormente. Para la ejecución de los scripts se recomienda tener la misma estructura de archivos y directorios que se muestra en la sección de "Estructura del proyecto". Para la ejecución de scripts específicos, se recomienda seguir los siguientes pasos:
+
 1. Clonar el repositorio en la computadora con:
-``` git clone remote git@github.com:P-arsimony/tareas_intro_bash_bioinfo.git ```
-
+``` bash
+git clone git@github.com:P-arsimony/tareas_intro_bash_bioinfo.git
+```
 2. Moverse a la carpeta ```scripts/individual_analyses/``` con:
-``` cd tareas_intro_bash_bioinfo/Proyecto_Final/scripts/individual_analyses/ ```
+``` bash 
+cd tareas_intro_bash_bioinfo/Proyecto_Final/scripts/individual_analyses/ 
+```
+3. Para la ejecución de cada script, se recomienda seguir las instrucciones específicas de cada uno, que se describen a continuación. Es importante mencionar que algunos scripts requieren la ejecución de otros scripts previos, por lo que se recomienda seguir el orden de ejecución sugerido.
 
-3. Ejecutar el script de creación de directorios en el caso de que no se tengan los directorios creados con:
-``` bash crear_directorios.sh ```
-
-4. En el caso de que los archivos de carriles (L001 y L002) estén separados, ejectuar el script de concatenación de archivos con:
-``` bash concatenar_archivos.sh ```
-
-5. Ejectutar el script de validación de la estructura de los archivos FASTQ con:
-``` bash validar_estructura_fastq.sh ``` proporcionando como argumento el directorio donde se ubican los archivos FASTQ. Por ejemplo:
-``` bash validar_estructura_fastq.sh ../../data/raw/total_RNA/ ```
-
-6. Ejecutar el script de validación de calidad de secuencias con MultiQC y FastQC con:
-``` bash validar_calidad_secuencias.sh ``` En este caso se puede o no propocionar como argumento el directorio donde se ubican los archivos. Por defecto, el script busca los archivos en: ```/../data/raw/total_RNA/cat_files```
+En el caso del script de calidades de secuencias, se recomienda utilizar el contenedor ```pipeline_calidad.sif``` para la ejecución de FastQC y MultiQC. Se recomienda construirlo con el script ```pipeline_calidad.def```.
+ - Moverse a la carpeta de contenedores con:
+  ```bash
+  cd mosquito_virome_yucatan_LEVE/containers/
+  ```
+ - Construir el contenedor con:
+  ```bash
+  apptainer build pipeline_calidad.sif pipeline_calidad.def
+  ```
 
 
-## Entradas y salidas
-**Entradas**:
+### `crear_directorios.sh`
+**Propósito:** Genera estructura completa de directorios del proyecto  
+**Uso:** `bash crear_directorios.sh`  
+**Entrada**: Ninguna, el script crea los directorios desde cero. Se crean en cualquier directorio desde donde se ejecute. Todos los demás scripts consideran la estructura aquí generada.
 
-- ```creacion_directorios.sh```: Para este script no es necesario ningún archivo adicional solamente crea los directorios que se esperan tener para todo el proyecto. Se crean en cualquier directorio desde donde se corra. **Todos los demás scripts consideran la estrcutura aquí generada**.
-- ```fastq_validacion.sh```: Antes del proceso de concatenación se verifica la integridad de los archivos. Para ello se necesita que los archivos tengan este patrón: ```PM[0-9]{4}_S[0-9]{1,2}_R[12]\.fastq``` para la verificación exitosa del nombre. En este caso no importa si los archivos estén o no comprimidos. 
-- ```cat_files.sh```: Este script contempla que se utilicen como entradas archivos ```.fastq``` sin comprimir y cuyo nombre tengan esta estructura: ```PM[0-9]{4}_S[0-9]{1,2}_R[12]\.fastq```.
-- ```calidad_secuencias.sh```: En este caso, la entrada del script es el archivo concatenado que se encuentra dentro del directorio **mosquito_virome_yucatan_LEVE/data/raw/total_RNA/cat_files*. 
-- ```bot_telegram.sh```: La entrada es cualquier mesnaje que se envíe desde el script. 
+**Salida:** Árbol de directorios según especificaciones.
 
-**Salidas**:
+### `cat_files.sh`  
+**Propósito:** Combina archivos de diferentes carriles de secuenciación.
+**Uso:** `bash cat_files.sh`  
+**Entrada**: Este script contempla que se utilicen como entradas archivos `.fastq` sin comprimir y cuyo nombre tengan esta estructura: `PM[0-9]{4}_S[0-9]{1,2}_R[12]\.fastq`.
+**Salida**: Se generan los archivos concatenados de los carriles por muestra.
 
-- ```creacion_directorios.sh```: Se genera toda la estructura de directorios aquí ejemplificada. 
-- ```cat_files.sh```: Se generan los archivos concatenados de los carriles por muestra. 
-- ```fastq_validacion.sh```: La validación genera un archivo ```.csv``` que contiene el número de líneas, lecturas y errores por archivo. 
-- ```calidad_secuencias.sh```: Se genera en el directorio ```mosquito_virome_yucatan_LEVE/results/untrimmed_qc/fastqc``` y en ```mosquito_virome_yucatan_LEVE/results/untrimmed_qc/multiqc```. En el caso de FastQC 
-- ```bot_telegram.sh```: Sólo manda mensajes al canal de telegram.
+**Validaciones:** 
+- Integridad de archivos FASTQ (líneas múltiplos de 4)
+- Presencia de archivos R1/R2 por muestra
+- Generación de checksums MD5
+
+### `fastq_validacion.sh`
+**Propósito:** Verifica formato y contenido de archivos FASTQ  
+**Uso:** `bash fastq_validacion.sh <directorio_fastq>` 
+**Entrada**: Recibe archivos tengan este patrón en el nombre: `PM[0-9]{4}_S[0-9]{1,2}_R[12]\.fastq`. No importa si los archivos estén o no comprimidos. 
+**Salida**: La validación genera un archivo `.csv` que contiene el número de líneas, lecturas y errores por archivo. 
+
+**Validaciones:**
+- Nombres de archivo según patrón `PMXXXX_SXX_RX`
+- Estructura interna (4 líneas por lectura)
+- Símbolos correctos (@, +)
+- Longitud de secuencias vs calidades
+
+### `calidad_secuencias.sh`
+**Propósito:** Análisis de calidad con FastQC y MultiQC  
+**Uso:** `bash calidad_secuencias.sh` 
+**Entrada**: El script busca por defecto los archivos FASTQ en `../../data/raw/total_RNA/cat_files/`, pero se puede proporcionar un directorio alternativo como argumento.
+**Salida**: Se generan reportes de FastQC en `results/untrimmed_qc/fastqc/` y un reporte agregado de MultiQC en `results/untrimmed_qc/multiqc/`.
+**Dependencias:** Contenedor `pipeline_calidad.sif`
+
+### `bot_telegram.sh`
+**Propósito:** Envío de notificaciones del pipeline  
+**Uso:** Importado por otros scripts (`source bot_telegram.sh`)
+**Configuración:** Requiere token de bot de Telegram
+
 
 ## Información del sistema
-El hardaware en donde se ejecutó el proyecto fue el siguiente:
+El hardware en donde se ejecutó el proyecto fue el siguiente:
 - **Tipo de equipo**: Computadora de escritorio.
 - **Sistema operativo**: Windows 11 Home, versión 10.0.26200, arquitectura x64.
 - **CPU**: Ryzen 9 9950X @ 4.30GHz (16 núcleos, 32 hilos). Overclocking hasta 5.70GHz.
-- **Memoria RAM**: 64 GB DDR5 6000 MHz. Capacidad máXima soportada por RAM: 128 Gb. 2 de 4 ranuras usadas.
+- **Memoria RAM**: 64 GB DDR5 6000 MHz. Capacidad máxima soportada por RAM: 128 GB. 2 de 4 ranuras usadas.
 - **Almacenamiento**: SSD NVMe de 2 TB.
 - **GPU**: AMD Radeon RX 7700 XT 12 GB GDDR6 (no utilizada en el análisis).
-- **Tiempo de ejecución**: Sólo se utilizó una pequeña porción de los .
+- **Tiempo de ejecución**: Sólo se utilizó una pequeña porción de los datos para probar esta pipeline. El tiempo fue de aproximadamente 3 horas para la validación de 4 muestras (lecturas pareadas). Se espera que el tiempo de ejecución aumente linealmente con el número de muestras.
 
 ## Autoría
 - **Nombre del autor**: Jorge Alberto Castro Rodríguez
 - **Tema de investigación**: Caracterización de Secuencias Virales de Especies de Mosquitos de Importancia Médica
 - **Institución**: Instituto de Investigaciones Biomédicas, UNAM
+- **Correo electrónico**: jacr@iibiomedicas.unam.mx
