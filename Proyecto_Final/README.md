@@ -9,7 +9,7 @@
   - [Descripción general del proyecto](#descripción-general-del-proyecto)
   - [Estructura del proyecto](#estructura-del-proyecto)
   - [Requisitos de software](#requisitos-de-software)
-    - [Comandos de Bash utilizados](#comandos-de-bash-utilizados)
+  - [Comandos de Bash utilizados](#comandos-de-bash-utilizados)
   - [Configuración del entorno](#configuración-del-entorno)
   - [Uso del proyecto](#uso-del-proyecto)
   - [Ejecución de los scripts](#ejecución-de-los-scripts)
@@ -35,7 +35,7 @@ de calidad de datos de secuenciación de transcriptomas de mosquitos vectores
 - Notificaciones automatizadas vía Telegram
 - Ejecución en entornos contenerizados con Apptainer.
 
-**Tiempo de procesamiento:** ~X horas para N muestras
+**Tiempo de procesamiento:** El tiempo fue de aproximadamente 6 horas para la validación de 4 muestras (lecturas pareadas)
 
 ## Introducción
 Las enfermedades infecciosas emergentes son aquéllas, conocidas o no, que tienen el potencial de causar brotes con importante impacto financiero y en salud pública. Pueden ser recién introducidas a una población o pueden haber experimentado un aumento significativo en su incidencia o en su rango geográfico. Estos cambios se relacionan con factores ambientales, como cambios climatológicos o ecológicos, al igual que con procesos evolutivos que le permiten al patógeno infectar nuevos hospederos, lo que implica cambios demográficos y de distribución de la enfermedad.  Los virus, entre estos patógenos, representan un riesgo a la salud debido a la adaptabilidad que poseen a raíz de variaciones genéticas impuestas por sus tiempos generacionales cortos y altas tasas de mutación y evolutivas, particularmente los que poseen un genoma de RNA que son la clase más común de patógenos detrás de enfermedades humanas emergentes al año. 
@@ -49,10 +49,12 @@ La relación virus-mosquito-hospedero está determinada por factores extrínseco
 El objetivo de este proyecto es validar la integridad de los archivos FASTQ obtenidos de la secuenciación de transcriptomas de mosquitos de las especies *Ae. serratus* y *Ae. taeniorhynchus* de la península de Yucatán, México. Esta validación es crucial para asegurar la calidad de los datos antes de proceder con análisis posteriores, como el ensamblaje y la anotación de secuencias virales presentes en los mosquitos.
 
 ## Descripción general del proyecto
-El proyecto se divide en varias etapas. En general, la porción del proyecto que se describe en este documento se enfoca en la etapa de validación de los archivos FASTQ, que es una parte fundamental del flujo de trabajo general para la caracterización de secuencias virales en mosquitos. Dentro del proyecto en general, se cortan las secuencias, se depletan las lecturas del hospedero con mapeo a genomas de referencia de mosquitos, se hace ensamblaje *de novo* con distintos programas y se hace anotación de las secuencias ensambladas con BLAST y DIAMOND.
+El proyecto se divide en varias etapas. En general, la porción del proyecto que se describe en este documento se enfoca en la etapa de validación de los archivos FASTQ, que es una parte fundamental del flujo de trabajo general para la caracterización de secuencias virales en mosquitos. Sin embargo, dentro del proyecto en general, se cortan las secuencias, se depletan las lecturas del hospedero con mapeo a genomas de referencia de mosquitos, se hace ensamblaje *de novo* con distintos programas y se hace anotación de las secuencias ensambladas con BLAST y DIAMOND.
 
 
-Este script se enfoca en una etapa no contemplada inicialmente durante el planteamiento del flujo de trabajo; sin embargo, es importante para asegurar la integridad de los análisis posteriores. La idea en general es establecer un flujo de trabajo para validación de los datos, que incluya la concatenación de archivos de carriles (L001 y L002), la validación de la estructura de los archivos FASTQ, la generación de sumas de verificación MD5 y una prueba de validación de la calidad de las secuencias con FastQC y MultiQC. Como se muestra en el siguiente diagrama de flujo, sólo la parte de validación de los archivos FASTQ son los que resuelve el código que se presenta en este documento:
+Este script se enfoca en una etapa no contemplada inicialmente durante el planteamiento 
+del flujo de trabajo; sin embargo, es importante para asegurar la integridad de los 
+análisis posteriores. La idea en general es establecer un flujo de trabajo para validación de los datos, que incluya la concatenación de archivos de carriles (L001 y L002), la validación de la estructura de los archivos FASTQ, la generación de sumas de verificación MD5 y una prueba de validación de la calidad de las secuencias con FastQC y MultiQC. Como se muestra en el siguiente diagrama de flujo, sólo la parte de validación de los archivos FASTQ son los que resuelve el código que se presenta en este documento:
 
 ![Flujo de Trabajo. Se señala en rojo la parte del proyecto que el código cumple.](./mosquito_virome_yucatan_LEVE/docs/FlujoTrabajoGeneral.png)
 
@@ -83,12 +85,10 @@ mosquito_virome_yucatan_LEVE/
 │   ├── untrimmed_qc/
 │   │   └── fastqc/
 │   │   └── multiqc/
-|   |   └── stats/
 │   ├── trimmed/
 │   ├── trimmed_qc/
 │   │   └── fastqc/
 │   │   └── multiqc/
-|   |   └── stats/
 │   ├── aligned/
 │   └── assembly/
 │       ├── statistics/
@@ -126,7 +126,7 @@ mosquito_virome_yucatan_LEVE/
 | GNU Bash | 5.2.21+ | Shell de ejecución |
 | git | 2.34+ | Control de versiones 
 
-### Comandos de Bash utilizados
+## Comandos de Bash utilizados
   - case
   - echo
   - find
@@ -210,7 +210,7 @@ En el caso del script de calidades de secuencias, se recomienda utilizar el cont
 **Propósito:** Verifica formato y contenido de archivos FASTQ  
 **Uso:** `bash fastq_validacion.sh <directorio_fastq>` 
 **Entrada**: Recibe archivos tengan este patrón en el nombre: `PM[0-9]{4}_S[0-9]{1,2}_R[12]\.fastq`. No importa si los archivos estén o no comprimidos. 
-**Salida**: La validación genera el archivo `estadisticas_validacion.csv` que contiene el número de líneas, lecturas y errores por archivo. 
+**Salida**: La validación genera un archivo `.csv` que contiene el número de líneas, lecturas y errores por archivo. 
 
 **Validaciones:**
 - Nombres de archivo según patrón `PMXXXX_SXX_RX`
@@ -239,7 +239,7 @@ El hardware en donde se ejecutó el proyecto fue el siguiente:
 - **Memoria RAM**: 64 GB DDR5 6000 MHz. Capacidad máxima soportada por RAM: 128 GB. 2 de 4 ranuras usadas.
 - **Almacenamiento**: SSD NVMe de 2 TB.
 - **GPU**: AMD Radeon RX 7700 XT 12 GB GDDR6 (no utilizada en el análisis).
-- **Tiempo de ejecución**: Sólo se utilizó una pequeña porción de los datos para probar esta pipeline. El tiempo fue de aproximadamente 3 horas para la validación de 4 muestras (lecturas pareadas). Se espera que el tiempo de ejecución aumente linealmente con el número de muestras.
+- **Tiempo de ejecución**: Sólo se utilizó una pequeña porción de los datos para probar esta pipeline. El tiempo fue de aproximadamente 3 horas para la validación de 4 muestras (lecturas pareadas). Se espera que el tiempo de ejecución aumente con el número de muestras.
 
 ## Autoría
 - **Nombre del autor**: Jorge Alberto Castro Rodríguez
